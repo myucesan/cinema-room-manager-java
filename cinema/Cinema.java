@@ -8,6 +8,7 @@ public class Cinema {
         int rows = 7;
         int cols = 8;
 
+        // notice that the top row does not need to be part of a loop
         System.out.print("  ");
         System.out.println("1 2 3 4 5 6 7 8");
 
