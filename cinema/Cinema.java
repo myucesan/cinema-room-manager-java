@@ -9,16 +9,10 @@ public class Cinema {
         int cols = 8;
 
         System.out.print("  ");
-        for (int i = 1; i <= cols; i++) {
-            System.out.print(i + " ");
-        }
-        System.out.println();
+        System.out.println("1 2 3 4 5 6 7 8");
 
         for (int i = 1; i <= rows; i++) {
-            System.out.print(i + " ");
-            for (int j = 1; j <= cols; j++) {
-                System.out.print("S ");
-            }
+            System.out.print(i + " S".repeat(cols));
             System.out.println();
         }
     }
