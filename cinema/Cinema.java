@@ -24,9 +24,14 @@ public class Cinema {
     }
 
     private static boolean purchaseTicket(int chosenRow, int chosenSeat) {
-        if (room[chosenRow][chosenSeat].equals("S")) {
+        if (chosenRow >= room.length || chosenSeat >= room[0].length) {
+            System.out.println("Wrong input!");
+            return false;
+        } else if (room[chosenRow][chosenSeat].equals("S")) {
             room[chosenRow][chosenSeat] = "B";
             return true;
+        } else {
+            System.out.println("That ticket has already been purchased!");
         }
         return false;
     }
@@ -34,22 +39,59 @@ public class Cinema {
     private static boolean printMenu() {
         System.out.println("1. Show the seats");
         System.out.println("2. Buy a ticket");
+        System.out.println("3. Statistics");
         System.out.println("0. Exit");
         int choice = input.hasNextInt() ? input.nextInt() : 0;
         if (choice == 1) {
             printRoom();
             return false;
         } else if (choice == 2) {
-            System.out.println("Enter a row number:");
-            int chosenRow = input.hasNextInt() ? input.nextInt() : 0;
-            System.out.println("Enter a seat number in that row:");
-            int chosenSeat = input.hasNextInt() ? input.nextInt() : 0;
-            if (!purchaseTicket(chosenRow, chosenSeat)) {
-                // handle when ticket is already bought
-            }
-            System.out.println("$" + calculateTicketPrice(chosenRow));
+            int chosenRow;
+            int chosenSeat;
+            do {
+                System.out.println("Enter a row number:");
+                chosenRow = input.hasNextInt() ? input.nextInt() : 0;
+                System.out.println("Enter a seat number in that row:");
+                chosenSeat = input.hasNextInt() ? input.nextInt() : 0;
+            } while (!purchaseTicket(chosenRow, chosenSeat));
+
+            System.out.println("Ticket price: $" + calculateTicketPrice(chosenRow));
             return false;
-        } else return choice == 0;
+        } else if (choice == 3) {
+            calculateStatistics();
+            return false;
+        } else  return choice == 0;
+    }
+
+    private static void calculateStatistics() {
+        int rows = room.length - 1;
+        int cols = room[0].length - 1;
+        long noOfPurchasedTickets = Arrays.stream(room)
+                .flatMap(Arrays::stream) // Flatten the 2D array into a stream of elements
+                .filter(item -> item.equals("B"))
+                .count();
+
+        double percentageSold = (double) noOfPurchasedTickets / (double)(rows * cols) * 100;
+
+        int currentIncome = 0;
+        for (int i = 1; i <= rows; i++) {
+            for (int j = 1; j <= cols; j++) {
+                if (room[i][j].equals("B")) {
+                    currentIncome += calculateTicketPrice(i);
+                }
+            }
+        }
+
+        int totalIncome = 0;
+        for (int i = 1; i <= rows; i++) {
+            totalIncome += calculateTicketPrice(i) * cols;
+        }
+
+
+        System.out.println("Number of purchased tickets: " + noOfPurchasedTickets);
+        System.out.printf("Percentage: %.2f%% %n", percentageSold);;
+        System.out.println("Current income: $" + currentIncome);
+        System.out.println("Total income: $" + totalIncome);
     }
 
 
@@ -57,7 +99,6 @@ public class Cinema {
         int rows = room.length - 1;
         int cols = room[0].length - 1;
         int totalSeats = rows * cols;
-        System.out.println("Ticket price:");
         if (totalSeats <= 60) {
             return 10;
         } else {
